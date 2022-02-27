@@ -1,20 +1,19 @@
 package ru.job4j.concurrent;
 
 public class ConsoleProgress implements Runnable {
-    int count = 0;
-    String symbol = null;
+    String[] strings = {"-", "\\",   "|",  "/" };
 
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
-            count++;
+            for (String str : strings) {
+            System.out.print("\r load: " + str);
             try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            symbol = count % 2 == 0 ? "\\| " : " |/";
-            System.out.print("\r load: " + symbol);
         }
     }
 
