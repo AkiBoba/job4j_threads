@@ -9,27 +9,38 @@ import java.net.URL;
 public class Wget implements Runnable {
     private final String url;
     private final int speed;
+    private final String fileTo;
 
-    public Wget(String url, int speed) {
+    public Wget(String url, int speed, String fileTo) {
         this.url = url;
         this.speed = speed;
+        this.fileTo = fileTo;
     }
 
     @Override
     public void run() {
         try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
-             FileOutputStream fileOutputStream = new FileOutputStream("pom_tmp.xml")) {
+             FileOutputStream fileOutputStream = new FileOutputStream(fileTo)) {
             byte[] dataBuffer = new byte[1024];
             int bytesRead;
+            int downloadData = 1 * 1024 * 1024;
             long start = System.currentTimeMillis();
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
+                downloadData += bytesRead;
+                if (downloadData >= speed) {
+                    if (System.currentTimeMillis() - start < 1000) {
+                        try {
+                            Thread.sleep(1000 - (System.currentTimeMillis() - start));
+                            downloadData = 1 * 1024 * 1024;
+                            start = System.currentTimeMillis();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
-            try {
-                Thread.sleep(speed - (System.currentTimeMillis() - start));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,7 +49,8 @@ public class Wget implements Runnable {
     public static void main(String[] args) throws InterruptedException {
         String url = args[0];
         int speed = Integer.parseInt(args[1]);
-        Thread wget = new Thread(new Wget(url, speed));
+        String fileTo = args[2];
+        Thread wget = new Thread(new Wget(url, speed, fileTo));
         wget.start();
         wget.join();
     }
