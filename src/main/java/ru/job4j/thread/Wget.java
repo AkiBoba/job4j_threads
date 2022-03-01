@@ -47,7 +47,22 @@ public class Wget implements Runnable {
         }
     }
 
+    static void validate(String[] args) {
+        if (args.length != 3) {
+            throw new IllegalArgumentException(
+                    "Аргументы введены некорректно. Для правильной работы программы следует ввести три аргумента через пробел:"
+                            + System.lineSeparator()
+                            +  "2) типа int - количество миллисекунд  - скорость скачивания"
+                            +  System.lineSeparator()
+                            + "3) типа String - имя файла для созраниения скаченного контента"
+                            + System.lineSeparator()
+                            + "Пример: https://proof.ovh.net/files/10Mb.dat 5000 pom_tmp.xml"
+            );
+        }
+    }
+
     public static void main(String[] args) throws InterruptedException {
+        validate(args);
         String url = args[0];
         int speed = Integer.parseInt(args[1]);
         String fileTo = args[2];

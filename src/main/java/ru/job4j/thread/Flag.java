@@ -1,7 +1,7 @@
 package ru.job4j.thread;
 
 public class Flag {
-    private static boolean flag = true;
+    private static volatile boolean flag = true;
 
     public static void main(String[] args) throws InterruptedException {
         Thread thread = new Thread(
@@ -18,7 +18,7 @@ public class Flag {
         );
         thread.start();
         System.out.println(Thread.currentThread().getName());
-        Thread.sleep(1000);
+        Thread.sleep(1500);
         flag = false;
         thread.join();
     }
