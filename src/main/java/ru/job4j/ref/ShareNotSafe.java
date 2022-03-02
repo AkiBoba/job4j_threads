@@ -6,12 +6,11 @@ public class ShareNotSafe {
         User user = User.of("name");
         cache.add(user);
         Thread first = new Thread(
-                () -> {
-                    user.setName("rename");
-                }
+                () -> user.setName("rename")
         );
         first.start();
         first.join();
         System.out.println(cache.findById(1).getName());
+        System.out.println(cache.findAll());
     }
 }
