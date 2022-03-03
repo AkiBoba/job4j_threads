@@ -1,12 +1,12 @@
 package ru.job4j.userstorage;
 
 public class User {
-    private int id = 0;
+    private final int id;
     private volatile int amount;
 
-    public User(int amount) {
+    public User(int id, int amount) {
+        this.id = id;
         this.amount = amount;
-        this.id++;
     }
 
     public int getId() {

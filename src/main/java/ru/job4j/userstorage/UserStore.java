@@ -12,15 +12,26 @@ public class UserStore {
     private final ConcurrentHashMap<Integer, User> users = new ConcurrentHashMap<>();
     private final AtomicInteger id = new AtomicInteger();
 
+    public UserStore() {
+    }
+
     public boolean add(User user) {
-        synchronized (LOCK) {
-            return true;
-        }
+            boolean result = false;
+            if (!users.containsValue(user)) {
+                users.put(id.incrementAndGet(), user);
+                result = true;
+            }
+            return result;
     }
 
     public boolean update(User user) {
         synchronized (LOCK) {
-            return true;
+            boolean result = false;
+            if (users.containsKey(user.getId())) {
+                users.put(users.get(user.getId()).getId(), user);
+                result = true;
+            }
+            return result;
         }
     }
 
