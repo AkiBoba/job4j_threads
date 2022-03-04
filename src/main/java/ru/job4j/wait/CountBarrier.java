@@ -29,26 +29,4 @@ public class CountBarrier {
             }
         }
     }
-
-    public static void main(String[] args) {
-        int total = 10;
-        CountBarrier countBarrier = new CountBarrier(total);
-        Thread count = new Thread(
-                () -> {
-
-                    for (int i = 1; i <= total; i++) {
-                        System.out.println("count++");
-                        countBarrier.count();
-                    }
-                }
-        );
-        Thread waiting = new Thread(
-                () -> {
-                    countBarrier.await();
-                    System.out.println("Waiting off");
-                }
-        );
-        count.start();
-        waiting.start();
-    }
 }
