@@ -17,55 +17,24 @@ public class SimpleBlockingQueue<T> {
         this.total = total;
     }
 
-    public synchronized void offer(T value) {
+    public synchronized void offer(T value) throws InterruptedException {
         while (queue.size() >= total) {
             System.out.println("Очередь переполнена, ожидайте");
-            try {
                 wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
         }
         System.out.println("Очередь свободна для пополнения");
         queue.add(value);
         notify();
     }
 
-    public synchronized T poll() {
+    public synchronized T poll() throws InterruptedException {
         while (queue.isEmpty()) {
             System.out.println("Очередь пуста, ожидайте");
-            try {
                 wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
         }
         System.out.println("Вы можете получить объект из очереди");
         notify();
         return queue.poll();
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        int total = 10;
-        SimpleBlockingQueue<String> sbq = new SimpleBlockingQueue<>(total);
-        Thread consumer = new Thread(
-                () -> {
-                    for (int i = 0; i < total + 25; i++) {
-                        sbq.poll();
-                    }
-                }
-        );
-
-        Thread producer = new Thread(
-                () -> {
-                    for (int i = 0; i < total + 25; i++) {
-                        sbq.offer("value");
-                    }
-                }
-        );
-        producer.start();
-        consumer.start();
-        producer.join();
-        producer.join();
-    }
 }

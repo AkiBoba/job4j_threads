@@ -31,4 +31,4 @@
 
         3.1.4. Wait, Notify, NotifyAll
 -0. Управление нитью через wait. [#6858]
--1. Реализовать шаблон Producer Consumer. [#1098]
+-1. Реализовать шаблон Producer Consumer. [#1098]-
