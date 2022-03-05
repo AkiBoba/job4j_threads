@@ -33,8 +33,9 @@ public class SimpleBlockingQueue<T> {
                 wait();
         }
         System.out.println("Вы можете получить объект из очереди");
+        T poll = queue.poll();
         notify();
-        return queue.poll();
+        return poll;
     }
 
 }
