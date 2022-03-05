@@ -1,19 +1,28 @@
 package ru.job4j.queue;
 
+import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.concurrent.CopyOnWriteArrayList;
+import static org.hamcrest.Matchers.is;
+
 import static org.junit.Assert.*;
 
 public class SimpleBlockingQueueTest {
 
-    public static void main(String[] args) throws InterruptedException {
-        int total = 10;
-        SimpleBlockingQueue<String> sbq = new SimpleBlockingQueue<>(total);
+    @Test
+    public void whenFetchAllThenGetIt() throws InterruptedException {
+        final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
+        int total = 5;
+        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(total);
         Thread consumer = new Thread(
                 () -> {
-                    for (int i = 0; i < total + 25; i++) {
+                    while (!queue.isEmpty() || !Thread.currentThread().isInterrupted()) {
                         try {
-                            sbq.poll();
+                            buffer.add(queue.poll());
                         } catch (InterruptedException e) {
                             e.printStackTrace();
+                            Thread.currentThread().interrupt();
                         }
                     }
                 }
@@ -21,11 +30,12 @@ public class SimpleBlockingQueueTest {
 
         Thread producer = new Thread(
                 () -> {
-                    for (int i = 0; i < total + 25; i++) {
+                    for (int i = 0; i < total; i++) {
                         try {
-                            sbq.offer("value");
+                            queue.offer(i);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
+                            Thread.currentThread().interrupt();
                         }
                     }
                 }
@@ -33,6 +43,8 @@ public class SimpleBlockingQueueTest {
         producer.start();
         consumer.start();
         producer.join();
-        producer.join();
+        consumer.interrupt();
+        consumer.join();
+        assertThat(buffer, is(Arrays.asList(0, 1, 2, 3, 4)));
     }
 }
