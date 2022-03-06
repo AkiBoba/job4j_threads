@@ -7,14 +7,15 @@ import java.util.concurrent.atomic.AtomicReference;
 @ThreadSafe
 public class CASCount {
     private final AtomicReference<Integer> count =
-            new AtomicReference<>();
+            new AtomicReference<>(0);
 
     public void increment() {
-        Integer temp;
+        Integer temp = count.get();
+        int newCount;
         do {
-            temp = count.get();
+            newCount = temp++;
             System.out.println(temp);
-        } while (!count.compareAndSet(temp, temp++));
+        } while (!count.compareAndSet(temp, newCount));
         throw new UnsupportedOperationException("Count is not impl.");
     }
 
@@ -23,6 +24,7 @@ public class CASCount {
     }
 
     public static void main(String[] args) {
-        CASCount
+        CASCount casCount = new CASCount();
+        casCount.increment();
     }
 }
