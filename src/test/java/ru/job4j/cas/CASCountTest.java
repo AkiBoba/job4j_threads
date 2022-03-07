@@ -7,21 +7,43 @@ import static org.hamcrest.Matchers.is;
 public class CASCountTest {
 
     @Test
-    public void increment3times() {
+    public void increment2times() throws InterruptedException {
         CASCount casCount = new CASCount();
-        casCount.increment();
-        casCount.increment();
-        casCount.increment();
-        assertThat(casCount.get(), is(3));
+        Thread thread1 = new Thread(
+                casCount::increment
+        );
+        Thread thread2 = new Thread(
+                casCount::increment
+        );
+        thread1.start();
+        thread2.start();
+        thread1.join();
+        thread2.join();
+        assertThat(casCount.get(), is(2));
     }
 
     @Test
-    public void increment10times() {
+    public void increment20times() throws InterruptedException {
         CASCount casCount = new CASCount();
-        for (int i = 0; i < 10; i++) {
-            casCount.increment();
-        }
-        assertThat(casCount.get(), is(10));
+        Thread thread1 = new Thread(
+                () -> {
+                    for (int i = 0; i < 10; i++) {
+                        casCount.increment();
+                    }
+                }
+        );
+        Thread thread2 = new Thread(
+                () -> {
+                    for (int i = 0; i < 10; i++) {
+                        casCount.increment();
+                    }
+                }
+        );
+        thread1.start();
+        thread2.start();
+        thread1.join();
+        thread2.join();
+        assertThat(casCount.get(), is(20));
 
     }
 
