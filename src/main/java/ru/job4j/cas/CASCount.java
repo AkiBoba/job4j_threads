@@ -13,18 +13,11 @@ public class CASCount {
         Integer temp = count.get();
         int newCount;
         do {
-            newCount = temp++;
-            System.out.println(temp);
+            newCount = temp + 1;
         } while (!count.compareAndSet(temp, newCount));
-        throw new UnsupportedOperationException("Count is not impl.");
     }
 
     public int get() {
         return count.get();
-    }
-
-    public static void main(String[] args) {
-        CASCount casCount = new CASCount();
-        casCount.increment();
     }
 }
