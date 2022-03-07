@@ -11,9 +11,17 @@ public class Cache {
     }
 
     public boolean update(Base model) {
-        return false;
+        return memory.computeIfPresent(model.getId(), (k, v) -> {
+            if (model.getVersion() != v.getVersion()) {
+                throw new OptimisticException("Versions are not equal");
+            }
+            v.setVersion(v.getVersion() + 1);
+            v.setName(model.getName());
+            return v;
+        }) != null;
     }
 
     public void delete(Base model) {
+        memory.remove(model.getId());
     }
 }
