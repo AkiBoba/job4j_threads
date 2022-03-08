@@ -9,17 +9,17 @@ public class EmailNotification {
             Runtime.getRuntime().availableProcessors()
     );
 
-    public void notification(List<User> users) {
-        pool.submit(() -> users.forEach(this::emailTo));
-    }
-
     public void emailTo(User user) {
-        String subject = String.format("Notification %s to email %s.", user.getUsername(), user.getEmail());
-        String body = String.format("Add a new event to %s", user.getUsername());
-        send(subject, body, user.getEmail());
+        pool.submit(() -> {
+            String subject = String.format("Notification %s to email %s", user.getUsername(), user.getEmail());
+            String body = String.format("Add a new event to %s", user.getUsername());
+            System.out.println(subject + " "  + body);
+            send(subject, body, user.getEmail());
+        });
     }
 
     public void  close() {
+        pool.shutdown();
         while (!pool.isTerminated()) {
             try {
                 Thread.sleep(100);
