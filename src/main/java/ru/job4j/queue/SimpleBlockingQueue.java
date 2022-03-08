@@ -23,6 +23,7 @@ public class SimpleBlockingQueue<T> {
                 wait();
         }
         System.out.println("Очередь свободна для пополнения");
+        System.out.println("add to queue - " + value);
         queue.add(value);
         notify();
     }
@@ -34,6 +35,7 @@ public class SimpleBlockingQueue<T> {
         }
         System.out.println("Вы можете получить объект из очереди");
         T poll = queue.poll();
+        System.out.println("poll object - " + poll);
         notify();
         return poll;
     }
